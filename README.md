@@ -28,6 +28,7 @@
          2. Buscar en Marketplace scala
          3. Instalar
          4. Resetear IntelliJ
+         
             ![plugins.png](imagenes/plugins.png)
       2. Nuevo projecto 
          1. Tenemos que poner un nombre de proyecto en Name 
@@ -39,6 +40,7 @@
          5. Creamos
       3. Comprobar que ha funcionado 
          1. Click botón verde de play y verán el mensaje en la terminal: Hello world!
+         
       ![run.png](imagenes/run.png)
 </details>
 
