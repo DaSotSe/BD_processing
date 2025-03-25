@@ -109,21 +109,30 @@ object Sesion1 {
 
    val tublas = List((1,2),(2,3), (3,2))
 
-   val l = List(1,2,3,4,5,6,1)
+   val l: Seq[Int] = List(1,2,3,4,5,6,1)
 
    val filtro = l.filter{ x =>
-     val condi = x > 3
+     val condi = x > 3 & x<6 & x !=4
      condi
    }
 
-   val lMap = l.map(x=> x - 1)
+
+
+   val lMap = l.map(x=> x+1)
 
    l.foreach(x => println(x-1))
 
 
-   val mapa = Map(1 -> "Enero", 2 -> "Febrero")
 
-   val resMapa = mapa.filter(_._2 == "Enero")
+   val mapa: Map[Int, (String, String, Int)] = Map(1 -> ("Enero", "frio", 3),  2 -> ("Febrero", "frio", 3))
+
+
+
+    case class MesTiempo(mes:String, tiempo: Option[String])
+    val mapa2 = Map(1 -> MesTiempo("Enero",  Option("frio")),
+                    2 -> MesTiempo("Febrero", None))
+
+   val resMapa = mapa2.filter(_._2.tiempo == Option("frio"))
 
 
    val set = Set(1,2,3,1)
