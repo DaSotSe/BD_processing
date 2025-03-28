@@ -1,5 +1,3 @@
-package sesion2
-
 object Sesion2 {
 
   case class whastsapp(Id:Int,telefono:String,grupo:List[String]=List(),nick: Option[String])
