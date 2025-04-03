@@ -1,7 +1,7 @@
 package Sesion2_1
 
 import Sesion1.PruebaMain1.imprimirLongitud
-import Sesion2_1.sesion2_1.{MesTiempo, Persona, buscarMesYClima, f, filtraPersonas2, filtramapa, filtrapersona, funcionesDeClase, imprimirLongitud2}
+import Sesion2_1.sesion2_1.{MesTiempo, Persona, buscarMesYClima, f, filtraPersonas2, filtramapa, filtrapersona, funcionesDeClase, imprimirLongitud2, sumList, ultimoElemento}
 import org.scalatest.Matchers.convertToAnyShouldWrapper
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -51,5 +51,18 @@ class sesion2_1Test extends FlatSpec {
   "Test Funciones De Clase" should "prueba" in {
     funcionesDeClase()
   }
+
+  "Ultimo elemento de la lista" should "prueba" in {
+    val lista = List(1,2,3,4)
+    ultimoElemento(lista) shouldBe 4
+
+    ultimoElemento(List("a", "b", "c")) shouldBe "c"
+  }
+
+  "Recursividad" should "Test" in{
+    sumList(List(1,1,1,3,4)) shouldBe 10
+
+  }
+
 
 }

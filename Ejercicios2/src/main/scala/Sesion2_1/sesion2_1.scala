@@ -57,7 +57,25 @@ object sesion2_1 {
     println(stringBox.getValue)
 
   }
+// Creamos una funcion generica con un tipo generico para ser empleado con Int y String
+  val r = Persona("r", Option(1))
+  val p = r.copy(nombre = "r")
 
+  def ultimoElemento[S](ls: List[S]): S = ls.last // Tambien se puede utilizar ls(ls.lenght-1), nos da el ultimo elemento de la lista ls
+
+  val lista2:Seq[Int] = 1::2::Nil
+  val lista3: Seq[Int] = Seq(1,2)
+  val b: Boolean = List() == Nil
+  val b2: Boolean = 1::2::Nil == Seq(1,2)
+
+
+
+  def sumList(ls: List[Int]): Int = ls match {
+    case Nil => 0
+    case head :: tail =>
+      val r = head + sumList(tail)
+      r
+  }
 
 
 }
