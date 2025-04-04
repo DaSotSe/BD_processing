@@ -63,7 +63,7 @@ trait SparkSessionTestWrapper {
     .config("hive.exec.dynamic.partition.process_type", "nonstrict")
     .config("hive.exec.dynamic.partition", "true")
     .config("hive.exec.dynamic.partition.mode", "nonstrict")
-    .enableHiveSupport()
+    //.enableHiveSupport()
     .getOrCreate()
 
   spark.sparkContext.setLogLevel("WARN")
