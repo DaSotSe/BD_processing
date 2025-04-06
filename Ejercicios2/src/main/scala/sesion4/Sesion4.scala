@@ -1,8 +1,11 @@
 package sesion4
 
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
+
+
 
 import scala.concurrent.duration.DurationConversions.fromNowConvert.R
 
@@ -23,4 +26,10 @@ object Sesion4 {
   def lecturaCsv(path: String)(sc: SparkContext): RDD[String] = sc.textFile(path)
 
   def lecturaCsvDf(path: String)(implicit  spark: SparkSession) = spark.read.csv(path)
+
+
+  def writecsv(df:DataFrame,path:String) = df.write.option("header",true).mode("overwrite").csv(path)
+
+  def writeParquet(df: DataFrame, path: String): Unit =
+    df.write.mode("overwrite").parquet(path)
 }

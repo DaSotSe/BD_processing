@@ -51,4 +51,22 @@ class Sesion4Test extends TestInit{
     df.show(false)
 
   }
+
+  "Escritura DF" should "escribir DF" in {
+    val df = spark.read
+      .option("header", true)
+      .csv("/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/src/main/scala/ventas.csv")
+
+    writecsv(df, "/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/examen")
+
+  }
+
+  "Escritura en Parquet" should "guardar un DataFrame" in {
+    val df = spark.read
+      .option("header", true)
+      .csv("/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/src/main/scala/ventas.csv")
+
+    writeParquet(df, "/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/examen")
+  }
+
 }
