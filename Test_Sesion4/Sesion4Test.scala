@@ -2,12 +2,8 @@ package sesion4
 
 import org.apache.spark.rdd
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import sesion4.Sesion4._
 import utils.TestInit
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.apache.spark.sql.types._
 
 class Sesion4Test extends TestInit{
 
@@ -70,41 +66,7 @@ class Sesion4Test extends TestInit{
       .option("header", true)
       .csv("/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/src/main/scala/ventas.csv")
 
-    //writeParquet(df, "/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/examen")
-
-    df.write.partitionBy("Id_producto")
-      .mode("Overwrite")
-      .parquet("/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/examen")
-  }s
-    /* esta es una prueba para hacer un esquema pero no se han realizado conversiones para que sea con DF (se hace con una funcion con RDD)
-  "Dataframe" should "Read" in {
-
-      // Definir esquema
-      val schema = StructType(Seq(
-        StructField("id_venta", StringType, nullable = false),
-        StructField("id_producto", StringType, nullable = true),
-        StructField("cantidad", StringType, nullable = true),
-        StructField("precio_unitario", StringType, nullable = true)
-      ))
-
-      //Crear datos dummy
-      val datos = Seq(Row("1", "101", "2", "11.0"),
-                      Row("2", "102", "3", "15.0"))
-
-      // Convertir a Dataframe
-      val df = newDf(datos,schema)
-      val in = filtarImpar(df)// la funcion filtar espera como entrada un RDD, por eso da error
-
-      val out = newDf(Seq(Row("2", "102", "3", "15.0")),schema)
-      // asi es como se valida los dataframe del test
-      checkDfIgnoreDefault(in,out)//la funcion filtar espera como salida un RDD, por eso da error
-*/
-
-
-
-
-
-
-
+    writeParquet(df, "/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/examen")
+  }
 
 }
