@@ -2,11 +2,10 @@ package sesion4
 
 import org.apache.spark.rdd
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import sesion4.Sesion4._
 import utils.TestInit
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.types._
 
 class Sesion4Test extends TestInit{
@@ -76,120 +75,102 @@ class Sesion4Test extends TestInit{
       .mode("Overwrite")
       .parquet("/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/examen")
 
-  }
 
-  "Generacion DF ,Filtrado y ordenado" should "Mostrar esquema, filtrar alumnos >8 y ordenarlos como DataFrame" in {
+    "Generacion DF ,Filtrado y ordenado" should "Generar DF , Filtrar los alumnos >8 y Ordenarlos " in {
 
-    import spark.implicits._
 
-    // Creamos un DataFrame directamente desde datos simulados
-    val df: DataFrame = Seq(
-      ("Alice", "A001", 9),
-      ("Bob", "A002", 7),
-      ("Charlie", "A003", 10),
-      ("David", "A004", 6),
-      ("Eva", "A005", 8)
-    ).toDF("name", "id", "grades")
-
-    // Mostrar el esquema (puedes quitar esto en el test si no quieres salida de consola)
-    df.printSchema()
-
-    // Aplicar la lógica directamente sobre el DataFrame
-    val dfFiltrado: DataFrame = df
-      .filter($"grades" > 8)
-      .orderBy($"grades".desc)
-
-    // DataFrame esperado
-    val out: DataFrame = Seq(
-      ("Charlie", "A003", 10),
-      ("Alice", "A001", 9)
-    ).toDF("name", "id", "grades")
-
-    // Comparación con tu función de test
-    checkDf(out, dfFiltrado)
-  }
-
-  "Promedio por estudiante" should "calcular correctamente el promedio de notas" in {
 
     import spark.implicits._
-  // Especificamos el path a los archivos CSV
-  val pathEstudiantes = "src/test/resources/estudiantes.csv"
-  val pathNotas = "src/test/resources/calificaciones.csv"
 
-  // Cargamos los DataFrames desde los CSV
-  val dfEstudiantes = lecturaCsvDf2(pathEstudiantes)
-  val dfNotas = lecturaCsvDf2(pathNotas)
+    "Generacion DF ,Filtrado y ordenado" should "Mostrar esquema, filtrar alumnos >8 y ordenarlos como DataFrame" in {
 
-  // Aplicamos la lógica: join + promedio
-  val df = promedioCalificacionesPorEstudiante(dfEstudiantes, dfNotas)
+      // Creamos un DataFrame directamente desde datos simulados
+      val df: DataFrame = Seq(
+        ("Alice", "A001", 9),
+        ("Bob", "A002", 7),
+        ("Charlie", "A003", 10),
+        ("David", "A004", 6),
+        ("Eva", "A005", 8)
+      ).toDF("name", "id", "grades")
 
-  // Mostramos resultado (opcional)
-  df.show()
+      // Mostrar el esquema (puedes quitar esto en el test si no quieres salida de consola)
+      df.printSchema()
 
-  // Aquí puedes comparar con un DataFrame esperado (ejemplo opcional):
-  val out = Seq(
-    ("Alice", 9.5),
-    ("Bob", 8.0),
-    ("Charlie", 7.5)
-  ).toDF("nombre", "promedio")
+      // Aplicar la lógica directamente sobre el DataFrame
+      val dfFiltrado: DataFrame = df
+        .filter($"grades" > 8)
+        .orderBy($"grades".desc)
 
-  checkDf(out, df)
-}
+      // DataFrame esperado
+      val out: DataFrame = Seq(
+        ("Charlie", "A003", 10),
+        ("Alice", "A001", 9)
+      ).toDF("name", "id", "grades")
 
-  "ejercicio4" should "contar correctamente la frecuencia de cada palabra" in {
+      // Comparación con tu función de test
+      checkDf(out, dfFiltrado)
+    }
 
-    val lista = List(
-      "hola mundo",
-      "hola spark",
-      "mundo spark spark"
-    )
 
-    // 🧪 Llamamos a la función definida en Sesion4
-    val resultado: RDD[(String, Int)] = ejercicio4(lista)
+      "Promedio por estudiante" should "calcular correctamente el promedio de notas" in {
 
-    // ✅ Convertimos a Map para comparar más fácilmente (no importa el orden)
-    val resultadoMap: Map[String, Int] = resultado.collect().toMap
+        // Especificamos el path a los archivos CSV
+        val pathEstudiantes = "src/test/resources/estudiantes.csv"
+        val pathNotas = "src/test/resources/calificaciones.csv"
 
-    // 🎯 Resultado esperado
-    val esperado = Map(
-      "hola"   -> 2,
-      "mundo"  -> 2,
-      "spark"  -> 3
-    )
+        // Cargamos los DataFrames desde los CSV
+        val dfEstudiantes = lecturaCsvDf(pathEstudiantes)
+        val dfNotas = lecturaCsvDf(pathNotas)
 
-    // ✅ Comparamos el resultado real con el esperado
-    resultadoMap shouldEqual esperado
-  }
+        // Aplicamos la lógica: join + promedio
+        val df = promedioCalificacionesPorEstudiante(dfEstudiantes, dfNotas)
 
-  "ejercicio5" should "ingreso total por producto" in {
+        // Mostramos resultado (opcional)
+        df.show()
 
-      // 📥 Ruta al archivo CSV (debe estar en src/test/resources/)
-      val path = "src/test/resources/ventas.csv"
+        // Aquí puedes comparar con un DataFrame esperado (ejemplo opcional):
+        val out = Seq(
+          ("Alice", 9.5),
+          ("Bob", 8.0),
+          ("Charlie", 7.5)
+        ).toDF("nombre", "promedio")
 
-      // 📊 Cargamos el CSV
-      val dfVentas: DataFrame = lecturaCsvVentas(path)
+        checkDf(out, df)
+      }
 
-      // ⚙️ Ejecutamos la lógica
-      val dfResultado = calcularIngresosPorProducto(dfVentas)
-      import spark.implicits._
-      // 🎯 Convertimos el resultado final a Map para comparación directa
-      val resultadoMap: Map[String, Double] = dfResultado
-        .as[(String, Double)]
-        .collect()
-        .toMap
+      "ejercicio4" should "contar correctamente la frecuencia de cada palabra" in {
 
-      // 🧪 Resultado esperado
-      val esperado: Map[String, Double] = Map(
-        "A" -> 30.0,
-        "B" -> 15.0
-      )
+        val lista = List(
+          "hola mundo",
+          "hola spark",
+          "mundo spark spark"
+        )
 
-      // ✅ Validamos usando estructura pedida
-      resultadoMap shouldEqual esperado
+        // 🧪 Llamamos a la función definida en Sesion4
+        val resultado: RDD[(String, Int)] = ejercicio4(lista)
+
+        // ✅ Convertimos a Map para comparar más fácilmente (no importa el orden)
+        val resultadoMap: Map[String, Int] = resultado.collect().toMap
+
+        // 🎯 Resultado esperado
+        val esperado = Map(
+          "hola"   -> 2,
+          "mundo"  -> 2,
+          "spark"  -> 3
+        )
+
+        // ✅ Comparamos el resultado real con el esperado
+        resultadoMap shouldEqual esperado
+      }
+      }
+
+
     }
 
 
 
+
+  }
     /* esta es una prueba para hacer un esquema pero no se han realizado conversiones para que sea con DF (se hace con una funcion con RDD)
   "Dataframe" should "Read" in {
 

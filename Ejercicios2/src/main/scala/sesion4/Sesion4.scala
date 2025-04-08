@@ -1,14 +1,13 @@
 package sesion4
 
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SparkSession
-
-
+import org.apache.spark.sql.functions.avg
 
 import scala.concurrent.duration.DurationConversions.fromNowConvert.R
 
+case class Scores(name: String, id: String, grades: Int)
 
 object Sesion4 {
   def mapa(rdd: RDD[String])(implicit spark: SparkSession) = {
@@ -32,4 +31,76 @@ object Sesion4 {
 
   def writeParquet(df: DataFrame, path: String): Unit =
     df.write.mode("overwrite").parquet(path)
+
+
+  def scoresToDs(df:DataFrame)(implicit spark: SparkSession): Dataset[Scores] = {
+    import spark.implicits._
+
+    df.as[Scores]
+  }
+
+
+  def lecturaCsvDf2(path: String)(implicit spark: SparkSession): DataFrame = {
+    spark.read
+      .option("header", "true")       // El CSV tiene encabezado
+      .option("inferSchema", "true")  // Detecta automáticamente los tipos (int, string, etc.)
+      .csv(path)
+  }
+
+  // Función que une estudiantes con calificaciones y calcula el promedio por estudiante
+  def promedioCalificacionesPorEstudiante(
+                                           dfEstudiantes: DataFrame,
+                                           dfNotas: DataFrame
+                                         )(implicit spark: SparkSession): DataFrame = {
+
+    import spark.implicits._
+
+    // Hacemos join por id del estudiante
+    val joined = dfEstudiantes
+      .join(dfNotas, dfEstudiantes("id") === dfNotas("id_estudiante"))
+
+    // Calculamos promedio de calificaciones por estudiante
+    val promedio = joined
+      .groupBy("nombre") // o también se puede usar dfEstudiantes("nombre")
+      .agg(
+        avg("calificacion").alias("promedio")
+      )
+      .orderBy($"promedio".desc)
+
+    promedio
+  }
+  //Ejercicio 4
+
+  def ejercicio4(palabras: List[String])(implicit spark: SparkSession): RDD[(String, Int)] = {
+    val sc = spark.sparkContext
+
+    val rdd = sc.parallelize(palabras)
+
+    rdd
+      .flatMap(_.split("\\s+"))
+      .map(_.toLowerCase())
+      .map(palabra => (palabra, 1))
+      .reduceByKey(_ + _)
+  }
+
+  //Ejercicio 5
+
+  def lecturaCsvVentas(path: String)(implicit spark: SparkSession): DataFrame = {
+    spark.read
+      .option("header", "true")
+      .option("inferSchema", "true")
+      .csv(path)
+  }
+
+  def calcularIngresosPorProducto(df: DataFrame)(implicit spark: SparkSession): DataFrame = {
+    import spark.implicits._
+    import org.apache.spark.sql.functions._
+
+    df
+      .withColumn("ingreso", $"cantidad" * $"precio_unitario")
+      .groupBy($"id_producto")
+      .agg(round(sum($"ingreso"), 2).alias("ingreso_total"))
+      .orderBy($"id_producto")
+  }
+
 }

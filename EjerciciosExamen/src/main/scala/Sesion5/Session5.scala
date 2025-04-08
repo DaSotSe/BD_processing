@@ -1,4 +1,4 @@
-/*package Sesion5
+package Sesion5
 
 import DFutils.utils.writeDs // viene del archivo de utils
 
@@ -9,20 +9,20 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
 
-/* case class Cuenta(
+ case class Cuenta(
                    id_venta: String,
                    id_producto: Option[String],
                    cantidad: Option[String],
                    precio_unitario: Option[String]
                  )
 
-*/
+
 
 object Session5 {
 
 
 
-/*
+
    por ejemplo como estructura de proyecto DE ETL def run(implicit spark:SparkSession): Unit = {
 
   ejemplo de estructura liena 1: def run(implicit spark:SparkSession): Unit = {
@@ -31,14 +31,14 @@ object Session5 {
   ejemplo de estructura liena 3: val out = transforms(dftransaction) la funcion de transformacion va debajo en este archivo TRANSFORMACION
 
   ejemplo de estructura liena 4: writeCsv(out,"path/out") ESCRITURA
-*/
-/*
+
+
     def cuentasToDataset(df:dataFrame)(implicit spark: SparkSession: unit = {
 
     }
   }
-*/
-/*
+
+
 // Definimos un objeto singleton llamado `Sesion5`
 // Aquí agrupamos la lógica relacionada con la transformación de datos de ventas
 object Sesion5 {
