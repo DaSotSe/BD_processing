@@ -78,114 +78,105 @@ class Sesion4Test extends TestInit{
 
   }
 
-  "Generacion DF ,Filtrado y ordenado" should "Mostrar esquema, filtrar alumnos >8 y ordenarlos como DataFrame" in {
+  "Generacion DF,Filtrado y ordenado" should "Mostrar esquema, filtrar alumnos puntuacion >8 y ordenarlos como DataFrame" in {
 
     import spark.implicits._
 
-    // Creamos un DataFrame directamente desde datos simulados
+    //Generamos un DF
     val df: DataFrame = Seq(
-      ("Alice", "A001", 9),
-      ("Bob", "A002", 7),
-      ("Charlie", "A003", 10),
-      ("David", "A004", 6),
-      ("Eva", "A005", 8)
-    ).toDF("name", "id", "grades")
+      ("Xose", 30, 9),
+      ("Miguel", 27, 7),
+      ("Miles", 45, 10),
+      ("Donald", 37, 6),
+      ("Thelonius", 31, 8)
+    ).toDF("name", "age", "grades")
 
-    // Mostrar el esquema (puedes quitar esto en el test si no quieres salida de consola)
+    // Mostramos el Schema
     df.printSchema()
 
-    // Aplicar la lógica directamente sobre el DataFrame
+    // Filtrado de DF
     val dfFiltrado: DataFrame = df
       .filter($"grades" > 8)
       .orderBy($"grades".desc)
 
-    // DataFrame esperado
+    // DF esperado
     val out: DataFrame = Seq(
-      ("Charlie", "A003", 10),
-      ("Alice", "A001", 9)
-    ).toDF("name", "id", "grades")
+      ("Miles", 45, 10),
+      ("Xose", 30, 9)
+    ).toDF("name", "age", "grades")
 
-    // Comparación con tu función de test
+    // Comprobacion
     checkDf(out, dfFiltrado)
   }
 
   "Promedio por estudiante" should "calcular correctamente el promedio de notas" in {
 
     import spark.implicits._
-  // Especificamos el path a los archivos CSV
-  val pathEstudiantes = "src/test/resources/estudiantes.csv"
-  val pathNotas = "src/test/resources/calificaciones.csv"
 
-  // Cargamos los DataFrames desde los CSV
-  val dfEstudiantes = lecturaCsvDf2(pathEstudiantes)
-  val dfNotas = lecturaCsvDf2(pathNotas)
 
-  // Aplicamos la lógica: join + promedio
-  val df = promedioCalificacionesPorEstudiante(dfEstudiantes, dfNotas)
+    val pathEstudiantes = "/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/src/test/resources/estudiantes.csv"
+    val pathNotas = "/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/src/test/resources/calificaciones.csv" // ✅ ¡corregido!
 
-  // Mostramos resultado (opcional)
-  df.show()
+    val dfEstudiantes = lecturaCsvDf2(pathEstudiantes)
+    val dfNotas = lecturaCsvDf2(pathNotas)
 
-  // Aquí puedes comparar con un DataFrame esperado (ejemplo opcional):
-  val out = Seq(
-    ("Alice", 9.5),
-    ("Bob", 8.0),
-    ("Charlie", 7.5)
-  ).toDF("nombre", "promedio")
+    val df = promedioCalificacionesPorEstudiante(dfEstudiantes, dfNotas)
 
-  checkDf(out, df)
-}
+    df.show()
+
+    // Comprobacion
+    val out = Seq(
+      ("Alice", 9.5),
+      ("Bob", 8.0),
+      ("Charlie", 7.5)
+    ).toDF("nombre", "promedio")
+
+    checkDfIgnoreDefault(out, df)
+  }
 
   "ejercicio4" should "contar correctamente la frecuencia de cada palabra" in {
 
-    val lista = List(
-      "hola mundo",
-      "hola spark",
-      "mundo spark spark"
-    )
+    val lista = List("hola miles", "hola thelonius", "mundo miles thelonius")
 
-    // 🧪 Llamamos a la función definida en Sesion4
-    val resultado: RDD[(String, Int)] = ejercicio4(lista)
+    val resultado: RDD[(String, Int)] = contarPalabasRDD(lista)
 
-    // ✅ Convertimos a Map para comparar más fácilmente (no importa el orden)
     val resultadoMap: Map[String, Int] = resultado.collect().toMap
 
-    // 🎯 Resultado esperado
-    val esperado = Map(
-      "hola"   -> 2,
-      "mundo"  -> 2,
-      "spark"  -> 3
-    )
+    val esperado = Map("hola"   -> 2, "mundo"  -> 1, "miles"  -> 2, "thelonius"  -> 2)
 
-    // ✅ Comparamos el resultado real con el esperado
     resultadoMap shouldEqual esperado
   }
 
   "ejercicio5" should "ingreso total por producto" in {
 
-      // 📥 Ruta al archivo CSV (debe estar en src/test/resources/)
-      val path = "src/test/resources/ventas.csv"
 
-      // 📊 Cargamos el CSV
-      val dfVentas: DataFrame = lecturaCsvVentas(path)
+    val path = "/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/src/test/resources/ventas.csv"
 
-      // ⚙️ Ejecutamos la lógica
-      val dfResultado = calcularIngresosPorProducto(dfVentas)
+    val dfVentas: DataFrame = lecturaCsvVentas(path)
+
+    val dfResultado = calcularIngresosPorProducto(dfVentas)
+    import spark.implicits._
+
+    val resultadoMap: Map[String, Double] = dfResultado.as[(String, Double)].collect().toMap
+
+    val esperado: Map[String, Double] = Map("A" -> 30.0, "B" -> 15.0)
+
+    resultadoMap shouldEqual esperado
+  }
+
+
+    "ejercicio2" should "añadir una columna que indica si el número de productos es par o impar" in {
       import spark.implicits._
-      // 🎯 Convertimos el resultado final a Map para comparación directa
-      val resultadoMap: Map[String, Double] = dfResultado
-        .as[(String, Double)]
-        .collect()
-        .toMap
 
-      // 🧪 Resultado esperado
-      val esperado: Map[String, Double] = Map(
-        "A" -> 30.0,
-        "B" -> 15.0
-      )
+      val path = "/Users/davidsoteloseguin/Library/Mobile Documents/com~apple~CloudDocs/Personal/Formacion /Bootcamp/Bootcamp KC/BD_Processing/BD_Process_Ejercicios/Ejercicios2/src/test/resources/operaciones.csv"
 
-      // ✅ Validamos usando estructura pedida
-      resultadoMap shouldEqual esperado
+      val dfOriginal: DataFrame = lecturaCsvOperaciones(path)
+      val dfResultado: DataFrame = ejercicio2(dfOriginal)
+
+
+      val dfEsperado = Seq((101, 2,  40.0, "par"), (102, 5, 100.0, "impar"), (103, 4,  80.0, "par"), (104, 7, 140.0, "impar"), (105, 6, 120.0, "par")).toDF("id_operacion", "num_productos", "importe_total", "par_impar")
+
+      checkDfIgnoreDefault(dfEsperado, dfResultado)
     }
 
 

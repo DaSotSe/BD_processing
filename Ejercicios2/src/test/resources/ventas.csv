@@ -1,0 +1,4 @@
+id_venta,id_producto,cantidad,precio_unitario
+1,A,2,10.0
+2,A,1,10.0
+3,B,3,5.0
